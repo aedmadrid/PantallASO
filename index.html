@@ -14,7 +14,7 @@
             img {
                 width: 100vw;
                 height: 100vh;
-                object-fit: cover;
+                object-fit: contain;
             }
         </style>
     </head>
@@ -54,6 +54,25 @@
                 showImage();
                 setInterval(showImage, 180000);
             });
+
+            let lastTap = 0;
+            document.addEventListener("touchstart", function (event) {
+                const currentTime = new Date().getTime();
+                const tapGap = currentTime - lastTap;
+                if (tapGap < 300 && tapGap > 0) {
+                    toggleFullscreen();
+                }
+                lastTap = currentTime;
+            });
+            document.addEventListener("dblclick", toggleFullscreen);
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
         </script>
     </body>
 </html>
