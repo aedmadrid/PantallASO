@@ -31,13 +31,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Generate images.json
+        run: |
+          cd img
+          ls *.jpg *.jpeg *.png *.gif 2>/dev/null | jq -R -s 'split("\n") | map(select(. != "")) | sort' > ../images.json || echo '[]' > ../images.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: '.'
+          path: "."
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
