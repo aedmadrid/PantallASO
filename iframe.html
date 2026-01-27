@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="3600" />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background: black;
+            }
+            img {
+                width: 100vw;
+                height: 100vh;
+                object-fit: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <img id="slide" src="" alt="Slideshow Image" />
+        <script>
+            async function loadImages() {
+                try {
+                    const response = await fetch("images.json");
+                    const data = await response.json();
+                    let images = data.map((filename) => `img/${filename}`);
+                    // Shuffle the images
+                    for (let i = images.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [images[i], images[j]] = [images[j], images[i]];
+                    }
+                    return images;
+                } catch (error) {
+                    console.error("Error loading images:", error);
+                    return [];
+                }
+            }
+
+            let images = [];
+            let index = 0;
+            const img = document.getElementById("slide");
+
+            function showImage() {
+                if (images.length > 0) {
+                    img.src = images[index];
+                    index = (index + 1) % images.length;
+                }
+            }
+
+            loadImages().then((loadedImages) => {
+                images = loadedImages;
+                showImage();
+                setInterval(showImage, 180000);
+            });
+        </script>
+    </body>
+</html>

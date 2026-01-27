@@ -1,71 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html>
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="3600" />
-        <title>Slideshow</title>
+        <title>PantallASO</title>
         <style>
             body {
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
-                background: black;
             }
-            img {
+            iframe {
                 width: 100vw;
                 height: 100vh;
-                object-fit: contain;
+                border: none;
+                display: block;
             }
         </style>
     </head>
     <body>
-        <img id="slide" src="" alt="Slideshow Image" />
+        <iframe src="iframe.html"></iframe>
         <script>
-            async function loadImages() {
-                try {
-                    const response = await fetch("images.json");
-                    const data = await response.json();
-                    let images = data.map((filename) => `img/${filename}`);
-                    // Shuffle the images
-                    for (let i = images.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [images[i], images[j]] = [images[j], images[i]];
-                    }
-                    return images;
-                } catch (error) {
-                    console.error("Error loading images:", error);
-                    return [];
-                }
-            }
-
-            let images = [];
-            let index = 0;
-            const img = document.getElementById("slide");
-
-            function showImage() {
-                if (images.length > 0) {
-                    img.src = images[index];
-                    index = (index + 1) % images.length;
-                }
-            }
-
-            loadImages().then((loadedImages) => {
-                images = loadedImages;
-                showImage();
-                setInterval(showImage, 180000);
-            });
-
-            let lastTap = 0;
-            document.addEventListener("touchstart", function (event) {
-                const currentTime = new Date().getTime();
-                const tapGap = currentTime - lastTap;
-                if (tapGap < 300 && tapGap > 0) {
-                    toggleFullscreen();
-                }
-                lastTap = currentTime;
-            });
-            document.addEventListener("dblclick", toggleFullscreen);
-
             function toggleFullscreen() {
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen();
@@ -73,6 +27,23 @@
                     document.exitFullscreen();
                 }
             }
+
+            const iframe = document.querySelector("iframe");
+            iframe.onload = () => {
+                const iframeDoc =
+                    iframe.contentDocument || iframe.contentWindow.document;
+
+                let lastTap = 0;
+                iframeDoc.addEventListener("touchstart", function (event) {
+                    const currentTime = new Date().getTime();
+                    const tapGap = currentTime - lastTap;
+                    if (tapGap < 300 && tapGap > 0) {
+                        toggleFullscreen();
+                    }
+                    lastTap = currentTime;
+                });
+                iframeDoc.addEventListener("dblclick", toggleFullscreen);
+            };
         </script>
     </body>
 </html>
